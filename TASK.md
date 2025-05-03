@@ -11,8 +11,8 @@
   - [x] Configure Tailwind CSS
 - [ ] Set up Supabase project
   - [ ] Create new Supabase project
-  - [ ] Note down Project URL and Anon Key
-  - [x] Set up environment variables (`.env.local` already created)
+  - [x] Note down Project URL and Anon Key
+  - [x] Set up environment variables (`.env` already created)
 - [ ] Create database schema
   - [ ] Run migrations for `profiles` table
   - [ ] Run migrations for `button_clicks` table
