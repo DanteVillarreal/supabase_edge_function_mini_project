@@ -38,7 +38,7 @@
 - [x] Create `/src/types/` folder
 
 ### Auth Edge Function
-- [ ] Create authentication Edge Function at `/supabase/functions/auth/index.ts`
+- [x] Create authentication Edge Function at `/supabase/functions/auth/index.ts`
   - [ ] Implement user registration endpoint
   - [ ] Implement user login endpoint
   - [ ] Add JWT validation helper
@@ -143,6 +143,7 @@
 ### TODOs
 - [ ] Create missing files: `src/pages/Dashboard.tsx`, `src/components/dashboard/Button.tsx`, `src/components/dashboard/ActionFeed.tsx` (Discovered During Work)
 - [ ] Create `tailwind.config.js` and `postcss.config.js` if custom Tailwind/PostCSS configuration is needed (Discovered During Work)
+- [x] Deployed and tested `/register` and `/login` endpoints for auth Edge Function (return 501 as expected) on 2024-06-01
 
 ## 📌 Blockers / Dependencies
 
