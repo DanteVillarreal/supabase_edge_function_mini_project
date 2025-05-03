@@ -9,7 +9,7 @@
   - [x] Configure TypeScript
   - [x] Set up ESLint and Prettier
   - [x] Configure Tailwind CSS
-- [ ] Set up Supabase project
+- [x] Set up Supabase project
   - [ ] Create new Supabase project
   - [x] Note down Project URL and Anon Key
   - [x] Set up environment variables (`.env` already created)
