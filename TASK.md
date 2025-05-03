@@ -13,10 +13,10 @@
   - [x] Create new Supabase project
   - [x] Note down Project URL and Anon Key
   - [x] Set up environment variables (`.env` already created)
-- [ ] Create database schema
-  - [ ] Run migrations for `profiles` table
-  - [ ] Run migrations for `button_clicks` table
-  - [ ] Set up Row Level Security policies
+- [x] Create database schema
+  - [x] Run migrations for `profiles` table
+  - [x] Run migrations for `button_clicks` table
+  - [x] Set up Row Level Security policies
 - [ ] Initialize Edge Functions
   - [ ] Set up Supabase CLI
   - [ ] Create function structure in `/supabase/functions/`
