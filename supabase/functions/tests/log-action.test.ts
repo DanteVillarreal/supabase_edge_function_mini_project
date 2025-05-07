@@ -53,7 +53,7 @@ describe('log-action function', () => {
         details: { test: true },
       };
       
-      console.log('Test Payload:', JSON.stringify(payload));
+      console.log('Test Payload:', JSON.stringify(payload, null, 2));
       
       const { data, error } = await supabase.functions.invoke(testEndpoint, {
         body: payload,
@@ -62,23 +62,107 @@ describe('log-action function', () => {
         }
       });
       
-      console.log('Response:', { data, error });
+      console.log('Response:', JSON.stringify({ data, error }, null, 2));
       expect(error).toBeNull();
       expect(data.success).toBe(true);
       
-      // Verify the action was logged in the database
-      const { data: actions, error: selectError } = await supabase
-        .from('user_actions')
-        .select('*')
-        .eq('user_id', testUserId)
-        .eq('action_type', 'test-action')
-        .single();
+      // Add a longer delay to allow for data propagation
+      // console.log('Waiting for data to propagate...');
+      // await new Promise(resolve => setTimeout(resolve, 3000)); // 3 second delay
       
-      console.log('Database query result:', { actions, selectError });
+      // Attempting to read from the database with detailed logging
+      console.log('Attempting to query the database for inserted actions...');
+      console.log('Looking for user_id:', testUserId);
       
-      expect(selectError).toBeNull();
-      expect(actions).toBeTruthy();
-      expect(actions.details).toEqual({ test: true });
+      // Check if supabaseAdmin is available for verification
+      if (!supabaseAdmin) {
+        console.error('No supabaseAdmin client available for verification - falling back to regular client');
+        
+        // Use regular client as fallback
+        const { data: actions, error: selectError } = await supabase
+          .from('user_actions')
+          .select('*')
+          .eq('user_id', testUserId);
+          
+        // Process results
+        console.log('Database query completed (using regular client)');
+        console.log('Query error:', selectError ? JSON.stringify(selectError, null, 2) : 'null');
+        console.log('Number of actions found:', actions ? actions.length : 0);
+        
+        if (actions && actions.length > 0) {
+          console.log('First action found:', JSON.stringify(actions[0], null, 2));
+        } else {
+          console.log('No actions found for user:', testUserId);
+          
+          // Additional debugging: try querying ALL actions
+          console.log('Trying a broader query to see any actions in the table...');
+          const { data: allActions } = await supabase
+            .from('user_actions')
+            .select('*')
+            .limit(5);
+          
+          console.log('Total actions in table:', allActions ? allActions.length : 0);
+          if (allActions && allActions.length > 0) {
+            console.log('Some recent actions:', JSON.stringify(allActions, null, 2));
+          }
+        }
+        
+        // Now perform the assertions
+        expect(selectError).toBeNull();
+        expect(actions).not.toBeNull();
+        expect(Array.isArray(actions)).toBe(true);
+        
+        if (actions && actions.length > 0) {
+          console.log('Verification successful: Found actions for test user');
+          expect(actions[0].details).toEqual({ test: true });
+        } else {
+          // Use expect to fail the test with a message
+          expect('No matching actions found in database with regular client').toBe(false);
+        }
+      } else {
+        // Use admin client to bypass RLS
+        const { data: actions, error: selectError } = await supabaseAdmin
+          .from('user_actions')
+          .select('*')
+          .eq('user_id', testUserId);
+          
+        console.log('Database query completed (using admin client)');
+        console.log('Query error:', selectError ? JSON.stringify(selectError, null, 2) : 'null');
+        console.log('Number of actions found:', actions ? actions.length : 0);
+        
+        if (actions && actions.length > 0) {
+          console.log('First action found:', JSON.stringify(actions[0], null, 2));
+        } else {
+          console.log('No actions found for user:', testUserId);
+          
+          // Additional debugging: try querying ALL actions
+          console.log('Trying a broader query to see any actions in the table...');
+          const { data: allActions } = await supabaseAdmin
+            .from('user_actions')
+            .select('*')
+            .limit(5);
+          
+          console.log('Total actions in table:', allActions ? allActions.length : 0);
+          if (allActions && allActions.length > 0) {
+            console.log('Some recent actions:', JSON.stringify(allActions, null, 2));
+          }
+        }
+        
+        // Now perform the assertions
+        expect(selectError).toBeNull();
+        expect(actions).not.toBeNull();
+        expect(Array.isArray(actions)).toBe(true);
+        expect(actions?.length).toBeGreaterThan(0); // Check that we have at least one row
+        
+        // Verify action details if found
+        if (actions && actions.length > 0) {
+          console.log('Verification successful: Found actions for test user');
+          expect(actions[0].details).toEqual({ test: true });
+        } else {
+          // Use expect to fail the test with a message
+          expect('No matching actions found in database with admin client').toBe(false);
+        }
+      }
     } catch (error) {
       console.error('Test failed with error:', error);
       if (error instanceof Error) {
@@ -97,7 +181,7 @@ describe('log-action function', () => {
       }
     });
     
-    console.log('Response:', { data, error });
+    console.log('Response for empty request:', JSON.stringify({ data, error }, null, 2));
     expect(error).toBeTruthy();
   });
 
