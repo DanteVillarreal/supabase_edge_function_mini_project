@@ -63,7 +63,8 @@ serve(async (req) => {
     }
 
     // Insert action into user_actions table
-    console.log('Inserting action:', { userId, actionType, details, timestamp })
+    console.log('Inserting action:', { userId, actionType, details, timestamp });
+    console.log('Attempting database insert with:', { userId, actionType, details, timestamp });
     const { data, error } = await supabaseClient
       .from('user_actions')
       .insert([
@@ -74,13 +75,14 @@ serve(async (req) => {
           created_at: timestamp,
         },
       ])
-      .select()
+      .select();
     
     if (error) {
-      console.error('Database error:', error)
+      console.error('Database error:', error);
     } else {
-      console.log('Inserted data:', data)
+      console.log('Successfully inserted data:', data);
     }
+    
 
     if (error) throw error
 
