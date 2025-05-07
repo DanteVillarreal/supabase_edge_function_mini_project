@@ -2,8 +2,10 @@
 // Handles user registration and login endpoints
 // TODO: Implement registration and login logic
 
-// @ts-ignore Deno import for Supabase Edge Functions
-import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
+import { serve } from 'std/http/server.ts'
+import { corsHeaders } from '../_shared/cors.ts'
+
+console.log(`Function "auth" up and running!`)
 
 serve(async (req: Request) => {
   // Parse request URL and method
@@ -13,7 +15,7 @@ serve(async (req: Request) => {
     // TODO: Add user registration logic
     return new Response(JSON.stringify({ message: 'Register endpoint not implemented.' }), {
       status: 501,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 
@@ -21,7 +23,7 @@ serve(async (req: Request) => {
     // TODO: Add user login logic
     return new Response(JSON.stringify({ message: 'Login endpoint not implemented.' }), {
       status: 501,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 

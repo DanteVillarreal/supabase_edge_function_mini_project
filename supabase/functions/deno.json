@@ -1,1 +1,12 @@
-﻿{"importMap": "./import_map.json"}
+{
+  "importMap": "./import_map.json",
+  "tasks": {
+    "test": "deno test"
+  },
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window"],
+    "strict": true,
+    "allowImportingTsExtensions": true
+  }
+}

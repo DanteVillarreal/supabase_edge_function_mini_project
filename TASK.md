@@ -18,9 +18,13 @@
   - [x] Run migrations for `button_clicks` table
   - [x] Set up Row Level Security policies
 - [ ] Initialize Edge Functions
-  - [ ] Set up Supabase CLI
-  - [ ] Create function structure in `/supabase/functions/`
-  - [ ] Configure Deno environment
+  - [x] Create /supabase/functions/ directory
+  - [x] Create /supabase/functions/auth/ directory and index.ts
+  - [x] Set up Supabase CLI
+  - [x] Create /supabase/functions/log-action/ directory and index.ts
+  - [x] Create /supabase/functions/get-profile/ directory and index.ts
+  - [x] Create /supabase/functions/realtime-handler/ directory and index.ts
+  - [x] Configure Deno environment
 
 ### Tailwind CSS Configuration
 - [x] Create `tailwind.config.js` file
@@ -45,8 +49,9 @@
   - [ ] Add error handling
 
 ### Frontend Authentication
-- [ ] Create Supabase client configuration in `/src/services/supabase.ts`
-- [ ] Implement `useAuth` hook in `/src/hooks/useAuth.ts`
+- [x] Create Supabase client configuration in `/src/services/supabase.ts`
+- [x] Implement `useAuth` hook in `/src/hooks/useAuth.ts`
+  - [x] Scaffold hook file
   - [ ] Add sign in functionality
   - [ ] Add sign up functionality
   - [ ] Add sign out functionality
