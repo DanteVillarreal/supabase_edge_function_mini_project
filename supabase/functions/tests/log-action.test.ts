@@ -1,4 +1,4 @@
-import { supabase, generateTestUserId, edgeFunctionUrl } from './setup'
+import { supabase, generateTestUserId, edgeFunctionUrl, supabaseKey } from './setup'
 
 describe('log-action function', () => {
   const testEndpoint = 'log-action'
@@ -13,7 +13,10 @@ describe('log-action function', () => {
     }
 
     const { data, error } = await supabase.functions.invoke(testEndpoint, {
-      body: payload
+      body: payload,
+      headers: {
+        Authorization: `Bearer ${supabaseKey}`
+      }
     })
 
     console.log('Response:', { data, error })
@@ -42,7 +45,10 @@ describe('log-action function', () => {
 
   it('should reject request without required fields', async () => {
     const { data, error } = await supabase.functions.invoke(testEndpoint, {
-      body: {}
+      body: {},
+      headers: {
+        Authorization: `Bearer ${supabaseKey}`
+      }
     })
 
     console.log('Response:', { data, error })

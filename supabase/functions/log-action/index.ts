@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { serve } from 'std/http/server.ts'
+import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { corsHeaders } from '../_shared/cors.ts'
 
 console.log(`Function "log-action" up and running!`)
@@ -12,22 +12,34 @@ interface ActionPayload {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: { ...corsHeaders } })
+  }
+
   try {
     // Create Supabase client
+    // Get auth header
+    const authHeader = req.headers.get('Authorization')
+    console.log('Auth header:', authHeader)
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'No authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
         global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
+          headers: { Authorization: authHeader },
         },
       }
     )
 
-    // Handle CORS preflight requests
-    if (req.method === 'OPTIONS') {
-      return new Response('ok', { headers: corsHeaders })
-    }
+
 
     // Only allow POST requests
     if (req.method !== 'POST') {
@@ -38,7 +50,9 @@ serve(async (req) => {
     }
 
     // Parse request body
-    const { userId, actionType, details, timestamp = new Date().toISOString() }: ActionPayload = await req.json()
+    const body = await req.json()
+    console.log('Request body:', body)
+    const { userId, actionType, details, timestamp = new Date().toISOString() }: ActionPayload = body
 
     // Validate required fields
     if (!userId || !actionType) {
@@ -48,9 +62,10 @@ serve(async (req) => {
       )
     }
 
-    // Insert action into button_clicks table
+    // Insert action into user_actions table
+    console.log('Inserting action:', { userId, actionType, details, timestamp })
     const { data, error } = await supabaseClient
-      .from('button_clicks')
+      .from('user_actions')
       .insert([
         {
           user_id: userId,
@@ -60,17 +75,20 @@ serve(async (req) => {
         },
       ])
       .select()
+    
+    if (error) {
+      console.error('Database error:', error)
+    } else {
+      console.log('Inserted data:', data)
+    }
 
     if (error) throw error
 
     return new Response(
-      JSON.stringify({ message: 'Action logged successfully', data }),
+      JSON.stringify({ success: true, data }),
       {
         status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     )
   } catch (error) {
@@ -78,10 +96,7 @@ serve(async (req) => {
       JSON.stringify({ error: error.message }),
       { 
         status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     )
   }
